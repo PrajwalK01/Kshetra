@@ -15,9 +15,17 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # ---------------------------------------------------------------- setup --
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-SA_PATH  = os.path.join(BASE_DIR, "firebase-service-account.json")
 
-cred = credentials.Certificate(SA_PATH)
+# On Vercel: set FIREBASE_CREDENTIALS env var to the full JSON string of the service account.
+# Locally: falls back to firebase-service-account.json file.
+_firebase_env = os.environ.get("FIREBASE_CREDENTIALS")
+if _firebase_env:
+    import json as _json
+    cred = credentials.Certificate(_json.loads(_firebase_env))
+else:
+    SA_PATH = os.path.join(BASE_DIR, "firebase-service-account.json")
+    cred = credentials.Certificate(SA_PATH)
+
 firebase_admin.initialize_app(cred)
 db = firestore.client(database_id="ai-studio-2da1764c-19d6-4a91-b59c-589c64f70438")
 
