@@ -46,7 +46,8 @@ function placeLocationMarker(lat, lng, accuracy) {
   if (locationCircle)  map.removeLayer(locationCircle);
 
   locationCircle = L.circle([lat, lng], {
-    radius: Math.min(accuracy, 500), color: '#fa4e05', fillColor: '#fa4e05',
+    radius: Math.min(accuracy, 80),
+    color: '#fa4e05', fillColor: '#fa4e05',
     fillOpacity: 0.08, weight: 1.5, dashArray: '4 4'
   }).addTo(map);
 
@@ -254,16 +255,24 @@ function renderPinList() {
 }
 
 // ---- Mobile sidebar ----
-const sidebar = document.getElementById('sidebar');
-const scrim   = document.getElementById('sidebar-scrim');
+const sidebar  = document.getElementById('sidebar');
+const scrim    = document.getElementById('sidebar-scrim');
+const openBtn  = document.getElementById('sidebar-open-btn');
+const closeBtn = document.getElementById('sidebar-close-btn');
 
-document.getElementById('hamburger').addEventListener('click', () => {
-  sidebar.classList.add('open'); scrim.classList.add('show');
-});
+openBtn.addEventListener('click', openSidebar);
+closeBtn.addEventListener('click', closeSidebar);
 scrim.addEventListener('click', closeSidebar);
 
+function openSidebar() {
+  sidebar.classList.add('open');
+  scrim.classList.add('show');
+  openBtn.style.display = 'none';
+}
 function closeSidebar() {
-  sidebar.classList.remove('open'); scrim.classList.remove('show');
+  sidebar.classList.remove('open');
+  scrim.classList.remove('show');
+  openBtn.style.display = '';
 }
 
 // ---- Init ----

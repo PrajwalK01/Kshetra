@@ -148,7 +148,7 @@ function placeLocationMarker(lat, lng, accuracy) {
   if (locationCircle)  map.removeLayer(locationCircle);
 
   locationCircle = L.circle([lat, lng], {
-    radius: Math.min(accuracy, 500),
+    radius: Math.min(accuracy, 80),
     color: '#fa4e05', fillColor: '#fa4e05',
     fillOpacity: 0.10, weight: 1.5, dashArray: '5 5'
   }).addTo(map);
