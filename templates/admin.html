@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#1a7f5a" />
+<title>Kshetra — Admin</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a7f5a' width='100' height='100' rx='20'/><polygon fill='white' points='30,45 50,25 70,45 70,70 60,70 60,55 40,55 40,70 30,70'/></svg>" />
+<link rel="stylesheet" href="{{ url_for('static', filename='lib/leaflet.min.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='lib/leaflet.draw.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+<div id="app">
+
+  <!-- ═══ Top bar ═══ -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><polygon points="3,11 12,2 21,11 21,21 15,21 15,15 9,15 9,21 3,21"/></svg>
+      </div>
+      <span class="brand-name">Kshetra</span>
+    </div>
+    <div class="topbar-right">
+      <span class="chip">Admin</span>
+      <span class="username-tag">{{ current_user.username }}</span>
+      <a class="btn-logout" href="{{ url_for('logout') }}">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <span class="btn-logout-label">Log out</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ Body ═══ -->
+  <div id="body-row">
+
+    <!-- Map (always full screen underneath) -->
+    <div id="map-wrap">
+      <div id="map"></div>
+
+      <!-- Floating tool FABs -->
+      <div id="fab-tools">
+        <button class="fab-tool active" id="btn-none" title="No tool selected">
+          <svg viewBox="0 0 24 24"><path d="M5 3l14 9-7 1-4 7z"/></svg>
+          <span>None</span>
+        </button>
+        <button class="fab-tool" id="btn-zone" title="Draw Zone">
+          <svg viewBox="0 0 24 24"><polygon points="3,11 12,2 21,11 21,21 3,21"/></svg>
+          <span>Zone</span>
+        </button>
+        <button class="fab-tool" id="btn-pin" title="Drop Pin">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Pin</span>
+        </button>
+      </div>
+
+      <!-- Location FAB -->
+      <button id="loc-btn" title="My location" aria-label="Go to my location">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+      </button>
+
+      <!-- Hint toast -->
+      <div id="hint"></div>
+
+      <!-- Sidebar open button (mobile) -->
+      <button id="sidebar-open-btn" aria-label="Open panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <span>Panel</span>
+      </button>
+    </div>
+
+    <!-- ═══ Sidebar (drawer on mobile, fixed on desktop) ═══ -->
+    <div id="sidebar-scrim" aria-hidden="true"></div>
+    <div id="sidebar">
+      <!-- Sidebar handle / close -->
+      <div class="sidebar-header">
+        <span class="sidebar-title">Dashboard</span>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close panel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div id="sidebar-scroll">
+
+        <!-- Zones -->
+        <div class="panel-section">
+          <div class="section-header">
+            <span class="section-label">Zones</span>
+            <span class="section-count" id="zone-count">0</span>
+          </div>
+          <div class="list-wrap" id="zone-list"></div>
+        </div>
+
+        <!-- Pins -->
+        <div class="panel-section">
+          <div class="section-header">
+            <span class="section-label">Pins</span>
+            <span class="section-count" id="pin-count">0</span>
+          </div>
+          <div class="list-wrap" id="pin-list"></div>
+        </div>
+
+        <!-- Team Members -->
+        <div class="panel-section" id="members-section">
+          <div class="section-header">
+            <span class="section-label">Members</span>
+            <span class="section-count" id="member-count">0</span>
+          </div>
+          <div id="member-list"></div>
+
+          <!-- Add member form -->
+          <div class="add-member-form">
+            <p class="form-section-title">Add Member</p>
+
+            <div class="field">
+              <label for="new-member-username">Username</label>
+              <input type="text" id="new-member-username" placeholder="e.g. field_charlie" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="new-member-password">Password</label>
+              <div class="input-with-eye">
+                <input type="password" id="new-member-password" placeholder="Min 6 characters" autocomplete="new-password" />
+                <button type="button" class="eye-btn" id="toggle-pw" aria-label="Toggle password visibility">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="new-member-team">Team Name <span class="optional">(optional for admin)</span></label>
+              <input type="text" id="new-member-team" placeholder="e.g. Team Charlie" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="new-member-role">Role</label>
+              <div class="role-toggle">
+                <button type="button" class="role-btn active" data-role="member">Member</button>
+                <button type="button" class="role-btn" data-role="admin">Admin</button>
+              </div>
+            </div>
+
+            <div id="add-member-error" class="form-error" style="display:none;"></div>
+            <button class="btn btn-primary btn-block" id="add-member-btn">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Member
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /sidebar-scroll -->
+    </div><!-- /sidebar -->
+
+  </div><!-- /body-row -->
+</div><!-- /app -->
+
+<!-- ═══ Zone / Pin Modal ═══ -->
+<div id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+  <div id="modal">
+    <div class="modal-handle"></div>
+    <h2 id="modal-heading">Name this Kshetra</h2>
+    <p class="modal-sub" id="modal-sub">Give it a name and pick a colour.</p>
+
+    <div class="field">
+      <label id="label-name">Shake name</label>
+      <input type="text" id="input-name" placeholder="e.g. North Sector Block A" />
+    </div>
+
+    <div class="field" id="color-block">
+      <label>Shakhe colour <span id="color-preview-label" style="font-weight:400;text-transform:none;letter-spacing:0;"></span></label>
+      <div id="color-grid"></div>
+    </div>
+
+    <div id="modal-actions">
+      <button class="btn" id="modal-cancel">Cancel</button>
+      <button class="btn btn-primary" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='lib/leaflet.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/leaflet.draw.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

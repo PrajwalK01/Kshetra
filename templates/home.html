@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Kshetra</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a7f5a' width='100' height='100' rx='20'/><polygon fill='white' points='30,45 50,25 70,45 70,70 60,70 60,55 40,55 40,70 30,70'/></svg>" />
+<link rel="stylesheet" href="{{ url_for('static', filename='lib/leaflet.min.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+<div id="app">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-brand">
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span>
+      </button>
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><polygon points="3,11 12,2 21,11 21,21 15,21 15,15 9,15 9,21 3,21"/></svg>
+      </div>
+      <span class="brand-name">Kshetra</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-badge">Public View</span>
+      <a class="btn-login" href="{{ url_for('login') }}">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Login
+      </a>
+    </div>
+  </div>
+
+  <div id="body-row">
+    <div id="sidebar-scrim" aria-hidden="true"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Zones & Pins</span>
+        <button class="sidebar-close" id="sidebar-close-btn" aria-label="Close sidebar">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="sidebar-scroll">
+
+        <div class="panel-section">
+          <div class="section-header">
+            <span class="section-label">Zones</span>
+            <span class="section-count" id="zone-count">0</span>
+          </div>
+          <p class="section-hint">Click any zone to jump to it on the map.</p>
+          <div class="list-wrap" id="zone-list"></div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-header">
+            <span class="section-label">Pins</span>
+            <span class="section-count" id="pin-count">0</span>
+          </div>
+          <div class="list-wrap" id="pin-list"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div id="map-wrap">
+      <div id="map"></div>
+
+      <!-- Live badge -->
+      <div class="map-banner">
+        <span class="dot-live"></span>
+        View-only 
+      </div>
+
+      <!-- Re-center location button -->
+      <button id="loc-btn" title="Go to my location" aria-label="Go to my location">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8" stroke-dasharray="2 3"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='lib/leaflet.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+</html>
