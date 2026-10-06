@@ -7,16 +7,20 @@
       "config": {
         "maxLambdaSize": "15mb"
       }
-    },
-    {
-      "src": "static/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
+      "src": "/static/css/(.*)",
+      "dest": "/static/css/$1"
+    },
+    {
+      "src": "/static/js/(.*)",
+      "dest": "/static/js/$1"
+    },
+    {
+      "src": "/static/lib/(.*)",
+      "dest": "/static/lib/$1"
     },
     {
       "src": "/(.*)",
