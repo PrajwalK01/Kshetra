@@ -89,24 +89,31 @@ def is_admin():
 
 def zone_to_dict(doc_id, data):
     return {
-        "id":         doc_id,
-        "name":       data.get("name", "Untitled zone"),
-        "team":       data.get("team") or "",
-        "color":      data.get("color", "#2f7d5a"),
-        "coords":     data.get("coords", []),
-        "status":     data.get("status", "not_started"),
-        "created_by": data.get("created_by", ""),
+        "id":          doc_id,
+        "name":        data.get("name", "Untitled zone"),
+        "team":        data.get("team") or "",
+        "color":       data.get("color", "#2f7d5a"),
+        "coords":      data.get("coords", []),
+        "status":      data.get("status", "not_started"),
+        "description": data.get("description") or "",
+        "timing":      data.get("timing") or "",
+        "contact":     data.get("contact") or "",
+        "created_by":  data.get("created_by", ""),
     }
 
 
 def pin_to_dict(doc_id, data):
     return {
-        "id":         doc_id,
-        "name":       data.get("name", "Untitled pin"),
-        "lat":        data.get("lat", 0),
-        "lng":        data.get("lng", 0),
-        "zone_id":    data.get("zone_id") or None,
-        "created_by": data.get("created_by", ""),
+        "id":          doc_id,
+        "name":        data.get("name", "Untitled pin"),
+        "lat":         data.get("lat", 0),
+        "lng":         data.get("lng", 0),
+        "color":       data.get("color") or "#d4712a",
+        "description": data.get("description") or "",
+        "timing":      data.get("timing") or "",
+        "contact":     data.get("contact") or "",
+        "zone_id":     data.get("zone_id") or None,
+        "created_by":  data.get("created_by", ""),
     }
 
 
@@ -247,14 +254,17 @@ def create_zone():
         return jsonify({"error": "A zone requires at least 3 points."}), 400
     doc_ref = db.collection(COL_ZONES).document()
     payload = {
-        "name":       (data.get("name") or "Untitled Zone").strip(),
-        "team":       (data.get("team") or "").strip(),
-        "color":      data.get("color") or "#2f7d5a",
-        "coords":     coords,
-        "status":     "not_started",
-        "created_by": current_user.username,
-        "created_at": now_iso(),
-        "updated_at": now_iso(),
+        "name":        (data.get("name") or "Untitled Zone").strip(),
+        "team":        (data.get("team") or "").strip(),
+        "color":       data.get("color") or "#2f7d5a",
+        "coords":      coords,
+        "status":      "not_started",
+        "description": (data.get("description") or "").strip(),
+        "timing":      (data.get("timing") or "").strip(),
+        "contact":     (data.get("contact") or "").strip(),
+        "created_by":  current_user.username,
+        "created_at":  now_iso(),
+        "updated_at":  now_iso(),
     }
     doc_ref.set(payload)
     return jsonify(zone_to_dict(doc_ref.id, payload)), 201
@@ -270,10 +280,13 @@ def update_zone(zone_id):
     data = request.get_json(force=True)
     updates = {"updated_at": now_iso()}
     if is_admin():
-        if "name"   in data: updates["name"]   = (data["name"] or "").strip()
-        if "team"   in data: updates["team"]   = (data["team"] or "").strip()
-        if "color"  in data: updates["color"]  = data["color"]
-        if "status" in data: updates["status"] = data["status"]
+        if "name"        in data: updates["name"]        = (data["name"] or "").strip()
+        if "team"        in data: updates["team"]        = (data["team"] or "").strip()
+        if "color"       in data: updates["color"]       = data["color"]
+        if "status"      in data: updates["status"]      = data["status"]
+        if "description" in data: updates["description"] = (data["description"] or "").strip()
+        if "timing"      in data: updates["timing"]      = (data["timing"] or "").strip()
+        if "contact"     in data: updates["contact"]     = (data["contact"] or "").strip()
     else:
         z = doc.to_dict()
         if z.get("team") != current_user.team_name:
@@ -329,12 +342,16 @@ def create_pin():
     data = request.get_json(force=True)
     doc_ref = db.collection(COL_PINS).document()
     payload = {
-        "name":       (data.get("name") or "Untitled Pin").strip(),
-        "lat":        float(data["lat"]),
-        "lng":        float(data["lng"]),
-        "zone_id":    data.get("zone_id") or None,
-        "created_by": current_user.username,
-        "created_at": now_iso(),
+        "name":        (data.get("name") or "Untitled Pin").strip(),
+        "lat":         float(data["lat"]),
+        "lng":         float(data["lng"]),
+        "color":       data.get("color") or "#d4712a",
+        "description": (data.get("description") or "").strip(),
+        "timing":      (data.get("timing") or "").strip(),
+        "contact":     (data.get("contact") or "").strip(),
+        "zone_id":     data.get("zone_id") or None,
+        "created_by":  current_user.username,
+        "created_at":  now_iso(),
     }
     doc_ref.set(payload)
     return jsonify(pin_to_dict(doc_ref.id, payload)), 201

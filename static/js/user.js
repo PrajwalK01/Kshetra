@@ -118,7 +118,24 @@ document.getElementById('loc-btn').addEventListener('click', () => {
 
 // ---- Map rendering ----
 function popupForZone(z) {
-  return `<div class="popup-title">${escapeHtml(z.name)}</div>`;
+  const rows = [];
+  if (z.description) rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h12V8z"/><polyline points="14 2 14 8 20 8"/></svg> ${escapeHtml(z.description)}</div>`);
+  if (z.timing)      rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${escapeHtml(z.timing)}</div>`);
+  if (z.contact)     rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 10a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.44-.44a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 17z"/></svg> <a href="tel:${escapeHtml(z.contact)}" style="color:var(--accent);font-weight:600;">${escapeHtml(z.contact)}</a></div>`);
+  return `<div class="popup-title">${escapeHtml(z.name)}</div>${rows.join('')}`;
+}
+
+function popupForPin(p) {
+  const rows = [];
+  if (p.description) rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16h12V8z"/><polyline points="14 2 14 8 20 8"/></svg> ${escapeHtml(p.description)}</div>`);
+  if (p.timing)      rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${escapeHtml(p.timing)}</div>`);
+  if (p.contact)     rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 10a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l.44-.44a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 17z"/></svg> <a href="tel:${escapeHtml(p.contact)}" style="color:var(--accent);font-weight:600;">${escapeHtml(p.contact)}</a></div>`);
+  const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+  rows.push(`<a href="${navUrl}" target="_blank" rel="noopener" class="popup-nav-btn">
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+    Navigate
+  </a>`);
+  return `<div class="popup-title">${escapeHtml(p.name)}</div>${rows.join('')}`;
 }
 
 function addZoneToMap(z) {
@@ -126,20 +143,21 @@ function addZoneToMap(z) {
   const layer = L.polygon(latlngs, {
     color: z.color, fillColor: z.color, fillOpacity: 0.25, weight: 2.5
   }).addTo(map);
-  layer.bindPopup(popupForZone(z));
+  layer.bindPopup(popupForZone(z), { maxWidth: 260 });
   layer.on('click', () => layer.openPopup());
   z._layer = layer;
   zones.push(z);
 }
 
 function addPinToMap(p) {
+  const color = p.color || '#d4712a';
   const marker = L.marker([p.lat, p.lng], {
     icon: L.divIcon({
-      className: '', iconSize: [16,16], iconAnchor: [8,8],
-      html: `<div style="width:16px;height:16px;border-radius:50%;background:#d4712a;border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);"></div>`
+      className: '', iconSize: [22,22], iconAnchor: [11,11],
+      html: `<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.35);animation:loc-pulse 2s infinite;"></div>`
     })
   }).addTo(map);
-  marker.bindPopup(`<div class="popup-title">${escapeHtml(p.name)}</div>`);
+  marker.bindPopup(popupForPin(p), { maxWidth: 260 });
   marker.on('click', () => marker.openPopup());
   p._marker = marker;
   pins.push(p);

@@ -161,17 +161,44 @@
 <div id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
   <div id="modal">
     <div class="modal-handle"></div>
-    <h2 id="modal-heading">Name this Kshetra</h2>
-    <p class="modal-sub" id="modal-sub">Give it a name and pick a colour.</p>
+    <h2 id="modal-heading">New Zone</h2>
+    <p class="modal-sub" id="modal-sub">Fill in the details below.</p>
 
+    <!-- Name -->
     <div class="field">
-      <label id="label-name">Shake name</label>
+      <label id="label-name">Name</label>
       <input type="text" id="input-name" placeholder="e.g. North Sector Block A" />
     </div>
 
+    <!-- Description -->
+    <div class="field">
+      <label>Description <span class="optional">(optional)</span></label>
+      <textarea id="input-desc" rows="2" placeholder="Brief details about this location…"
+        style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:var(--r-md);font-size:14px;resize:none;font-family:inherit;background:var(--panel);color:var(--ink);transition:border-color .15s;"></textarea>
+    </div>
+
+    <!-- Timing -->
+    <div class="field">
+      <label>Timing <span class="optional">(optional)</span></label>
+      <input type="text" id="input-timing" placeholder="e.g. Mon–Fri 9am–5pm" />
+    </div>
+
+    <!-- Contact -->
+    <div class="field">
+      <label>Contact No. <span class="optional">(optional)</span></label>
+      <input type="tel" id="input-contact" placeholder="e.g. +91 98765 43210" />
+    </div>
+
+    <!-- Color picker (zone only) -->
     <div class="field" id="color-block">
-      <label>Shakhe colour <span id="color-preview-label" style="font-weight:400;text-transform:none;letter-spacing:0;"></span></label>
+      <label>Colour <span id="color-preview-label" style="font-weight:400;text-transform:none;letter-spacing:0;"></span></label>
       <div id="color-grid"></div>
+    </div>
+
+    <!-- Pin colour picker (pin only) -->
+    <div class="field" id="pin-color-block" style="display:none;">
+      <label>Pin Colour</label>
+      <div id="pin-color-grid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;"></div>
     </div>
 
     <div id="modal-actions">

@@ -331,21 +331,24 @@ document.getElementById('btn-zone').addEventListener('click', () => setMode('zon
 document.getElementById('btn-pin').addEventListener('click',  () => setMode('pin'));
 
 /* ── Modal ───────────────────────────────────────────────────── */
-const backdrop     = document.getElementById('modal-backdrop');
-const inputName    = document.getElementById('input-name');
-const colorBlock   = document.getElementById('color-block');
-const colorGrid    = document.getElementById('color-grid');
-const modalHeading = document.getElementById('modal-heading');
-const modalSub     = document.getElementById('modal-sub');
-const labelName    = document.getElementById('label-name');
+const backdrop          = document.getElementById('modal-backdrop');
+const inputName         = document.getElementById('input-name');
+const inputDesc         = document.getElementById('input-desc');
+const inputTiming       = document.getElementById('input-timing');
+const inputContact      = document.getElementById('input-contact');
+const colorBlock        = document.getElementById('color-block');
+const colorGrid         = document.getElementById('color-grid');
+const pinColorBlock     = document.getElementById('pin-color-block');
+const pinColorGrid      = document.getElementById('pin-color-grid');
+const modalHeading      = document.getElementById('modal-heading');
+const modalSub          = document.getElementById('modal-sub');
 const colorPreviewLabel = document.getElementById('color-preview-label');
 
-// Build 120-colour grid
+// Zone colour grid (120 colours)
 colorGrid.innerHTML = ZONE_COLORS.map((c, i) =>
   `<button type="button" class="swatch-btn${i === 0 ? ' selected' : ''}"
-     style="background:${c}" data-color="${c}" title="${c}" aria-label="Color ${c}"></button>`
+     style="background:${c}" data-color="${c}" title="${c}" aria-label="${c}"></button>`
 ).join('');
-
 colorGrid.querySelectorAll('.swatch-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     selectedColor = btn.dataset.color;
@@ -356,18 +359,47 @@ colorGrid.querySelectorAll('.swatch-btn').forEach(btn => {
   });
 });
 
+// Pin colour palette
+const PIN_COLORS = [
+  '#d4712a','#e74c3c','#c0392b','#e91e63','#9b59b6',
+  '#3f51b5','#2196f3','#00bcd4','#009688','#1a7f5a',
+  '#27ae60','#8bc34a','#f1c40f','#ff9800','#ff5722',
+  '#795548','#607d8b','#212121','#ffffff','#000000'
+];
+let selectedPinColor = PIN_COLORS[0];
+pinColorGrid.innerHTML = PIN_COLORS.map((c, i) =>
+  `<button type="button" class="pin-color-btn${i === 0 ? ' selected' : ''}"
+     style="background:${c};width:30px;height:30px;border-radius:50%;border:3px solid ${i === 0 ? '#000' : 'transparent'};transition:all .15s;cursor:pointer;"
+     data-color="${c}" aria-label="${c}"></button>`
+).join('');
+pinColorGrid.querySelectorAll('.pin-color-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedPinColor = btn.dataset.color;
+    pinColorGrid.querySelectorAll('.pin-color-btn').forEach(b => {
+      b.style.borderColor = 'transparent';
+      b.style.transform = 'scale(1)';
+    });
+    btn.style.borderColor = '#000';
+    btn.style.transform = 'scale(1.25)';
+  });
+});
+
 function openModal(type) {
-  inputName.value = '';
+  inputName.value    = '';
+  inputDesc.value    = '';
+  inputTiming.value  = '';
+  inputContact.value = '';
+
   if (type === 'zone') {
-    modalHeading.textContent = 'Name this zone';
-    modalSub.textContent     = 'Give it a name and pick a colour.';
-    labelName.textContent    = '';
-    colorBlock.style.display = '';
+    modalHeading.textContent  = 'New Zone';
+    modalSub.textContent      = 'Fill in the zone details.';
+    colorBlock.style.display  = '';
+    pinColorBlock.style.display = 'none';
   } else {
-    modalHeading.textContent = 'Label this pin';
-    modalSub.textContent     = '';
-    labelName.textContent    = "";
-    colorBlock.style.display = 'none';
+    modalHeading.textContent  = 'New Pin';
+    modalSub.textContent      = 'Fill in the pin details.';
+    colorBlock.style.display  = 'none';
+    pinColorBlock.style.display = '';
   }
   backdrop.style.display = 'flex';
   setTimeout(() => inputName.focus(), 80);
@@ -388,6 +420,9 @@ document.getElementById('input-name').addEventListener('keydown', e => {
 
 document.getElementById('modal-save').addEventListener('click', async () => {
   const name    = inputName.value.trim();
+  const desc    = inputDesc.value.trim();
+  const timing  = inputTiming.value.trim();
+  const contact = inputContact.value.trim();
   const saveBtn = document.getElementById('modal-save');
   saveBtn.disabled = true;
   try {
@@ -395,10 +430,13 @@ document.getElementById('modal-save').addEventListener('click', async () => {
       const z = await api('/api/zones', {
         method: 'POST',
         body: JSON.stringify({
-          name:   name || 'Untitled Zone',
-          team:   '',
-          color:  selectedColor,
-          coords: pendingCoords
+          name:        name || 'Untitled Zone',
+          team:        '',
+          color:       selectedColor,
+          coords:      pendingCoords,
+          description: desc,
+          timing:      timing,
+          contact:     contact,
         })
       });
       addZoneToMap(z);
@@ -407,9 +445,13 @@ document.getElementById('modal-save').addEventListener('click', async () => {
       const p = await api('/api/pins', {
         method: 'POST',
         body: JSON.stringify({
-          name: name || 'Untitled Pin',
-          lat:  pendingLatLng.lat,
-          lng:  pendingLatLng.lng
+          name:        name || 'Untitled Pin',
+          lat:         pendingLatLng.lat,
+          lng:         pendingLatLng.lng,
+          color:       selectedPinColor,
+          description: desc,
+          timing:      timing,
+          contact:     contact,
         })
       });
       addPinToMap(p);
@@ -425,7 +467,24 @@ document.getElementById('modal-save').addEventListener('click', async () => {
 
 /* ── Map rendering ───────────────────────────────────────────── */
 function popupForZone(z) {
-  return `<div class="popup-title">${esc(z.name)}</div>`;
+  const rows = [];
+  if (z.description) rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> ${esc(z.description)}</div>`);
+  if (z.timing)      rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${esc(z.timing)}</div>`);
+  if (z.contact)     rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.61 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 3.12 4.18 2 2 0 0 1 5.09 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L9.91 9.91a16 16 0 0 0 6 6l.44-.44a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 23 18z"/></svg> <a href="tel:${esc(z.contact)}" style="color:var(--accent);font-weight:600;">${esc(z.contact)}</a></div>`);
+  return `<div class="popup-title">${esc(z.name)}</div>${rows.join('')}`;
+}
+
+function popupForPin(p) {
+  const rows = [];
+  if (p.description) rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> ${esc(p.description)}</div>`);
+  if (p.timing)      rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${esc(p.timing)}</div>`);
+  if (p.contact)     rows.push(`<div class="popup-row"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.61 19a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 3.12 4.18 2 2 0 0 1 5.09 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L9.91 9.91a16 16 0 0 0 6 6l.44-.44a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 23 18z"/></svg> <a href="tel:${esc(p.contact)}" style="color:var(--accent);font-weight:600;">${esc(p.contact)}</a></div>`);
+  const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+  rows.push(`<a href="${navUrl}" target="_blank" rel="noopener" class="popup-nav-btn">
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+    Navigate
+  </a>`);
+  return `<div class="popup-title">${esc(p.name)}</div>${rows.join('')}`;
 }
 
 function addZoneToMap(z) {
@@ -433,22 +492,30 @@ function addZoneToMap(z) {
   const layer = L.polygon(latlngs, {
     color: z.color, fillColor: z.color, fillOpacity: 0.22, weight: 2.5
   }).addTo(drawnItems);
-  layer.bindPopup(popupForZone(z));
+  layer.bindPopup(popupForZone(z), { maxWidth: 260 });
   layer.on('click', () => layer.openPopup());
   z._layer = layer;
   zones.push(z);
 }
 
 function addPinToMap(p) {
+  const color = p.color || '#d4712a';
   const marker = L.marker([p.lat, p.lng], {
     icon: L.divIcon({
       className: '',
-      iconSize: [18, 18],
-      iconAnchor: [9, 9],
-      html: `<div style="width:18px;height:18px;border-radius:50%;background:#d4712a;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);"></div>`
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+      html: `<div style="
+        width:22px;height:22px;border-radius:50%;
+        background:${color};
+        border:3px solid #fff;
+        box-shadow:0 2px 8px rgba(0,0,0,.4);
+        transition:transform .15s;
+        cursor:pointer;
+      " class="pin-marker-dot"></div>`
     })
   }).addTo(map);
-  marker.bindPopup(`<div class="popup-title">${esc(p.name)}</div>`);
+  marker.bindPopup(popupForPin(p), { maxWidth: 260 });
   marker.on('click', () => marker.openPopup());
   p._marker = marker;
   pins.push(p);
