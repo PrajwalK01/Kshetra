@@ -48,7 +48,7 @@ function placeLocationMarker(lat, lng, accuracy) {
   // Accuracy ring — cap display radius so it doesn't fill the whole map
   locationCircle = L.circle([lat, lng], {
     radius: Math.min(accuracy, 500),
-    color: '#1a7f5a', fillColor: '#1a7f5a',
+    color: '#fa4e05', fillColor: '#fa4e05',
     fillOpacity: 0.08, weight: 1.5, dashArray: '4 4'
   }).addTo(map);
 
@@ -59,14 +59,14 @@ function placeLocationMarker(lat, lng, accuracy) {
       iconAnchor: [9, 9],
       html: `<div style="
         width:18px;height:18px;border-radius:50%;
-        background:#1a7f5a;border:3px solid #fff;
-        box-shadow:0 0 0 4px rgba(26,127,90,.25),0 2px 6px rgba(0,0,0,.3);
+        background:#fa4e05;border:3px solid #fff;
+        box-shadow:0 0 0 4px rgba(250,78,5,.25),0 2px 6px rgba(0,0,0,.3);
         animation:loc-pulse 2s infinite;
       "></div>
       <style>
         @keyframes loc-pulse{
-          0%,100%{box-shadow:0 0 0 4px rgba(26,127,90,.25),0 2px 6px rgba(0,0,0,.3)}
-          50%{box-shadow:0 0 0 10px rgba(26,127,90,.08),0 2px 6px rgba(0,0,0,.3)}
+          0%,100%{box-shadow:0 0 0 4px rgba(250,78,5,.25),0 2px 6px rgba(0,0,0,.3)}
+          50%{box-shadow:0 0 0 10px rgba(250,78,5,.08),0 2px 6px rgba(0,0,0,.3)}
         }
       </style>`
     })

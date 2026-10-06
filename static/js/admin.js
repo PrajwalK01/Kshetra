@@ -21,7 +21,7 @@ const ZONE_COLORS = [
   '#00bcd4','#0097a7','#00838f','#006064','#4dd0e1','#00acc1','#26c6da','#00e5ff',
   '#009688','#00796b','#00695c','#004d40','#4db6ac','#26a69a','#80cbc4','#1de9b6',
   /* Greens */
-  '#1a7f5a','#27ae72','#2ecc71','#43a047','#388e3c','#2e7d32','#1b5e20','#00c853',
+  '#fa4e05','#ff7a3d','#2ecc71','#43a047','#388e3c','#2e7d32','#1b5e20','#00c853',
   '#66bb6a','#a5d6a7','#8bc34a','#7cb342','#558b2f','#33691e','#76ff03','#64dd17',
   /* Yellow-greens / Limes */
   '#cddc39','#c0ca33','#afb42b','#827717','#d4e157','#9e9d24','#f9a825','#f57f17',
@@ -149,7 +149,7 @@ function placeLocationMarker(lat, lng, accuracy) {
 
   locationCircle = L.circle([lat, lng], {
     radius: Math.min(accuracy, 500),
-    color: '#1a7f5a', fillColor: '#1a7f5a',
+    color: '#fa4e05', fillColor: '#fa4e05',
     fillOpacity: 0.10, weight: 1.5, dashArray: '5 5'
   }).addTo(map);
 
@@ -362,7 +362,7 @@ colorGrid.querySelectorAll('.swatch-btn').forEach(btn => {
 // Pin colour palette
 const PIN_COLORS = [
   '#d4712a','#e74c3c','#c0392b','#e91e63','#9b59b6',
-  '#3f51b5','#2196f3','#00bcd4','#009688','#1a7f5a',
+  '#3f51b5','#2196f3','#00bcd4','#009688','#fa4e05',
   '#27ae60','#8bc34a','#f1c40f','#ff9800','#ff5722',
   '#795548','#607d8b','#212121','#ffffff','#000000'
 ];

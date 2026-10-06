@@ -3,23 +3,94 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>Kshetra — Sign In</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a7f5a' width='100' height='100' rx='20'/><polygon fill='white' points='30,45 50,25 70,45 70,70 60,70 60,55 40,55 40,70 30,70'/></svg>" />
+<title>RSS Kshetra — Sign In</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23fa4e05' width='100' height='100' rx='20'/><polygon fill='white' points='30,45 50,25 70,45 70,70 60,70 60,55 40,55 40,70 30,70'/></svg>" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+<style>
+  .auth-page {
+    background: linear-gradient(160deg, #fff8f3 0%, #ffffff 50%, #fff3eb 100%);
+  }
+  .auth-page::before {
+    background: radial-gradient(circle, rgba(250,78,5,.12), transparent 70%);
+  }
+  .auth-page::after {
+    background: radial-gradient(circle, rgba(250,120,50,.1), transparent 70%);
+  }
+  .om-header {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .om-symbol {
+    font-size: 38px;
+    line-height: 1;
+    color: var(--accent);
+    display: block;
+    text-shadow: 0 2px 12px rgba(250,78,5,.25);
+  }
+  .sanskrit-sub {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .14em;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: .75;
+    margin-top: 2px;
+  }
+  .auth-divider-om {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .auth-divider-om::before,
+  .auth-divider-om::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(250,78,5,.3), transparent);
+  }
+  .auth-divider-om span {
+    font-size: 13px;
+    color: var(--accent);
+    opacity: .6;
+  }
+  .lotus-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 10px 0 4px;
+  }
+  .lotus-dots span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: .3;
+  }
+  .lotus-dots span:nth-child(2) { opacity: .6; transform: scale(1.3); }
+</style>
 </head>
 <body>
 <div class="auth-page">
   <div class="auth-card">
+
+    <!-- Om header -->
+    <div class="om-header">
+      <span class="om-symbol">ॐ</span>
+      <div class="sanskrit-sub">॥ श्री गणेशाय नमः ॥</div>
+    </div>
+
+    <div class="auth-divider-om"><span>✦</span></div>
 
     <!-- Logo -->
     <div class="auth-logo">
       <div class="auth-logo-icon">
         <svg viewBox="0 0 24 24"><polygon points="3,11 12,2 21,11 21,21 15,21 15,15 9,15 9,21 3,21"/></svg>
       </div>
-      <h1>Kshetra</h1>
+      <div>
+        <h1 style="font-size:20px;">RSS Kshetra</h1>
+        <div style="font-size:11px;color:var(--ink-muted);letter-spacing:.06em;margin-top:1px;">क्षेत्र प्रबंधन प्रणाली</div>
+      </div>
     </div>
-
-    <p class="auth-sub"></p>
 
     <!-- Flash errors -->
     {% with messages = get_flashed_messages() %}
@@ -30,34 +101,21 @@
       {% endif %}
     {% endwith %}
 
-    <div class="auth-divider"></div>
-
     <!-- Form -->
-    <form method="POST" action="{{ url_for('login') }}" autocomplete="on">
+    <form method="POST" action="{{ url_for('login') }}" autocomplete="on" style="margin-top:16px;">
       <div class="field">
         <label for="username">Username</label>
-        <input
-          id="username"
-          type="text"
-          name="username"
+        <input id="username" type="text" name="username"
           placeholder="Enter your username"
-          autocomplete="username"
-          required
-          autofocus
-        />
+          autocomplete="username" required autofocus />
       </div>
       <div class="field">
         <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
+        <input id="password" type="password" name="password"
           placeholder="••••••••"
-          autocomplete="current-password"
-          required
-        />
+          autocomplete="current-password" required />
       </div>
-      <button class="btn btn-primary btn-block" type="submit">
+      <button class="btn btn-primary btn-block" type="submit" style="margin-top:6px;">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
           <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
           <polyline points="10 17 15 12 10 7"/>
@@ -67,16 +125,11 @@
       </button>
     </form>
 
-    <!-- Back link -->
-    <div style="text-align:center; display:flex; flex-direction:column; gap:6px; align-items:center;">
-      <a href="{{ url_for('signup') }}" class="back-link" style="color:var(--accent); font-weight:600;">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-          <circle cx="8.5" cy="7" r="4"/>
-          <line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
-        </svg>
-        Don't have an account? Sign up
-      </a>
+    <div class="lotus-dots">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div style="text-align:center;">
       <a href="{{ url_for('index') }}" class="back-link">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"/>

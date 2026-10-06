@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>Kshetra — Sign Up</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a7f5a' width='100' height='100' rx='20'/><polygon fill='white' points='30,45 50,25 70,45 70,70 60,70 60,55 40,55 40,70 30,70'/></svg>" />
+<title>RSS Kshetra — Sign Up</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23fa4e05' width='100' height='100' rx='20'/><polygon fill='white' points='30,45 50,25 70,45 70,70 60,70 60,55 40,55 40,70 30,70'/></svg>" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
@@ -13,10 +13,11 @@
 
     <!-- Logo -->
     <div class="auth-logo">
-      <div class="auth-logo-icon">
-        <svg viewBox="0 0 24 24"><polygon points="3,11 12,2 21,11 21,21 15,21 15,15 9,15 9,21 3,21"/></svg>
+      <div class="auth-logo-icon" style="font-size:24px;">ॐ</div>
+      <div>
+        <h1>RSS Kshetra</h1>
+        <div style="font-size:11px;color:var(--accent);letter-spacing:.06em;margin-top:1px;">क्षेत्र प्रबंधन प्रणाली</div>
       </div>
-      <h1>Kshetra</h1>
     </div>
 
     <p class="auth-sub">Create a member account to view your assigned zones.</p>
@@ -65,12 +66,12 @@
       </div>
 
       <div class="field">
-        <label for="team_name">Team Name <span class="optional">(optional)</span></label>
+        <label for="team_name"> Your Name <span class=""></span></label>
         <input
           id="team_name"
           type="text"
           name="team_name"
-          placeholder="e.g. Team Alpha"
+          placeholder="e.g. Prajwal K "
           autocomplete="off"
           value="{{ team_name or '' }}"
         />

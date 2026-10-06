@@ -46,14 +46,14 @@ function placeLocationMarker(lat, lng, accuracy) {
   if (locationCircle)  map.removeLayer(locationCircle);
 
   locationCircle = L.circle([lat, lng], {
-    radius: Math.min(accuracy, 500), color: '#1a7f5a', fillColor: '#1a7f5a',
+    radius: Math.min(accuracy, 500), color: '#fa4e05', fillColor: '#fa4e05',
     fillOpacity: 0.08, weight: 1.5, dashArray: '4 4'
   }).addTo(map);
 
   locationMarker = L.marker([lat, lng], {
     icon: L.divIcon({
       className: '', iconSize: [18,18], iconAnchor: [9,9],
-      html: `<div style="width:18px;height:18px;border-radius:50%;background:#1a7f5a;border:3px solid #fff;box-shadow:0 0 0 4px rgba(26,127,90,.25),0 2px 6px rgba(0,0,0,.3);"></div>`
+      html: `<div style="width:18px;height:18px;border-radius:50%;background:#fa4e05;border:3px solid #fff;box-shadow:0 0 0 4px rgba(250,78,5,.25),0 2px 6px rgba(0,0,0,.3);"></div>`
     })
   }).addTo(map);
   locationMarker.bindPopup('<div class="popup-title">📍 You are here</div>');
