@@ -21,11 +21,19 @@
       <div class="brand-icon">ॐ</div>
       <div>
         <span class="brand-name">RSS Kshetra</span>
-        <div class="brand-sub">क्षेत्र प्रबंधन</div>
       </div>
     </div>
     <div class="topbar-right">
       <span class="chip">Admin</span>
+      <!-- Search bar -->
+      <div class="search-wrap">
+        <div class="search-input-wrap">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="map-search-input" class="search-input" placeholder="Search zones, pins, places…" autocomplete="off" />
+          <button class="search-clear" id="search-clear-btn" aria-label="Clear search">✕</button>
+        </div>
+        <div class="search-results" id="map-search-results"></div>
+      </div>
       <span class="username-tag">{{ current_user.username }}</span>
       <a class="btn-logout" href="{{ url_for('logout') }}">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -137,7 +145,7 @@
               <input type="text" id="new-member-team" placeholder="e.g. Team Charlie" autocomplete="off" />
             </div>
             <div class="field">
-              <label for="new-member-role">Role</label>
+              <span class="field-label-static">Role</span>
               <div class="role-toggle">
                 <button type="button" class="role-btn active" data-role="member">Member</button>
                 <button type="button" class="role-btn" data-role="admin">Admin</button>
@@ -167,26 +175,26 @@
 
     <!-- Name -->
     <div class="field">
-      <label id="label-name">Name</label>
+      <label for="input-name" id="label-name">Name</label>
       <input type="text" id="input-name" placeholder="e.g. North Sector Block A" />
     </div>
 
     <!-- Description -->
     <div class="field">
-      <label>Description <span class="optional">(optional)</span></label>
+      <label for="input-desc">Description <span class="optional">(optional)</span></label>
       <textarea id="input-desc" rows="2" placeholder="Brief details about this location…"
         style="width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:var(--r-md);font-size:14px;resize:none;font-family:inherit;background:var(--panel);color:var(--ink);transition:border-color .15s;"></textarea>
     </div>
 
     <!-- Timing -->
     <div class="field">
-      <label>Timing <span class="optional">(optional)</span></label>
+      <label for="input-timing">Timing <span class="optional">(optional)</span></label>
       <input type="text" id="input-timing" placeholder="e.g. Mon–Fri 9am–5pm" />
     </div>
 
     <!-- Contact -->
     <div class="field">
-      <label>Contact No. <span class="optional">(optional)</span></label>
+      <label for="input-contact">Contact No. <span class="optional">(optional)</span></label>
       <input type="tel" id="input-contact" placeholder="e.g. +91 98765 43210" />
     </div>
 
@@ -211,6 +219,7 @@
 
 <script src="{{ url_for('static', filename='lib/leaflet.min.js') }}"></script>
 <script src="{{ url_for('static', filename='lib/leaflet.draw.js') }}"></script>
+<script src="{{ url_for('static', filename='js/map-utils.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 </html>

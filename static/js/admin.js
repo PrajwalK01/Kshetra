@@ -149,8 +149,8 @@ function placeLocationMarker(lat, lng, accuracy) {
 
   locationCircle = L.circle([lat, lng], {
     radius: Math.min(accuracy, 80),
-    color: '#fa4e05', fillColor: '#fa4e05',
-    fillOpacity: 0.10, weight: 1.5, dashArray: '5 5'
+    color: '#1a6b2a', fillColor: '#1a6b2a',
+    fillOpacity: 0.12, weight: 2, dashArray: '5 5'
   }).addTo(map);
 
   locationMarker = L.marker([lat, lng], {
@@ -737,11 +737,13 @@ function openSidebar() {
   sidebar.classList.add('open');
   scrim.classList.add('show');
   openBtn.style.display = 'none';
+  document.body.classList.add('panel-open');
 }
 function closeSidebar() {
   sidebar.classList.remove('open');
   scrim.classList.remove('show');
   openBtn.style.display = '';
+  document.body.classList.remove('panel-open');
 }
 
 /* ── Init ────────────────────────────────────────────────────── */
@@ -768,6 +770,20 @@ async function init() {
 
   // Start in no-tool mode
   setMode('none');
+
+  // Map utilities — compass, FPS/network overlay, search
+  addCompass(map);
+  addStatusOverlay(map);
+  initSearch(map, 'map-search-input', 'map-search-results');
+
+  // Search clear button
+  const clearBtn = document.getElementById('search-clear-btn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      document.getElementById('map-search-input').value = '';
+      document.getElementById('map-search-results').classList.remove('show');
+    });
+  }
 }
 
 init();

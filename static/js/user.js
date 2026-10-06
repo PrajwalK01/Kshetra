@@ -47,14 +47,25 @@ function placeLocationMarker(lat, lng, accuracy) {
 
   locationCircle = L.circle([lat, lng], {
     radius: Math.min(accuracy, 80),
-    color: '#fa4e05', fillColor: '#fa4e05',
-    fillOpacity: 0.08, weight: 1.5, dashArray: '4 4'
+    color: '#1a6b2a', fillColor: '#1a6b2a',
+    fillOpacity: 0.12, weight: 2, dashArray: '4 4'
   }).addTo(map);
 
   locationMarker = L.marker([lat, lng], {
     icon: L.divIcon({
       className: '', iconSize: [18,18], iconAnchor: [9,9],
-      html: `<div style="width:18px;height:18px;border-radius:50%;background:#fa4e05;border:3px solid #fff;box-shadow:0 0 0 4px rgba(250,78,5,.25),0 2px 6px rgba(0,0,0,.3);"></div>`
+      html: `<div style="
+        width:18px;height:18px;border-radius:50%;
+        background:#1a6b2a;border:3px solid #fff;
+        box-shadow:0 0 0 4px rgba(26,107,42,.3),0 2px 6px rgba(0,0,0,.3);
+        animation:green-pulse 2s infinite;
+      "></div>
+      <style>
+        @keyframes green-pulse{
+          0%,100%{box-shadow:0 0 0 4px rgba(26,107,42,.3),0 2px 6px rgba(0,0,0,.3)}
+          50%{box-shadow:0 0 0 10px rgba(26,107,42,.08),0 2px 6px rgba(0,0,0,.3)}
+        }
+      </style>`
     })
   }).addTo(map);
   locationMarker.bindPopup('<div class="popup-title">📍 You are here</div>');
@@ -268,11 +279,13 @@ function openSidebar() {
   sidebar.classList.add('open');
   scrim.classList.add('show');
   openBtn.style.display = 'none';
+  document.body.classList.add('panel-open');
 }
 function closeSidebar() {
   sidebar.classList.remove('open');
   scrim.classList.remove('show');
   openBtn.style.display = '';
+  document.body.classList.remove('panel-open');
 }
 
 // ---- Init ----
@@ -297,6 +310,16 @@ async function init() {
   } catch (err) {
     console.error('Failed to load data:', err);
   }
+
+  // Map utilities
+  addCompass(map);
+  addStatusOverlay(map);
+  initSearch(map, 'map-search-input', 'map-search-results');
+  const clearBtn = document.getElementById('search-clear-btn');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    document.getElementById('map-search-input').value = '';
+    document.getElementById('map-search-results').classList.remove('show');
+  });
 }
 
 init();
